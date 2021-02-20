@@ -1,7 +1,7 @@
 import taichi as ti
 ti.init(arch=ti.cpu)
 m=1#默认质量为1
-max_num_dots=2
+max_num_dots=200
 x=ti.Vector.field(2,dtype=ti.f32,shape=max_num_dots)#位置
 v=ti.Vector.field(2,dtype=ti.f32,shape=max_num_dots)#速度
 f=ti.Vector.field(2,dtype=ti.f32,shape=max_num_dots)#拉力
@@ -24,11 +24,24 @@ def substep():
                     #spring
                     x_ij=x[i]-x[j]
                     d=x_ij.normalized()
-                    f[i]+=-springY * (x_ij.norm() / rest_len -
-                                           1) * d
+                    f[i]+=-springY * (x_ij.norm() / rest_len - 1) * d
 
             v[i]+=dt*(ti.Vector([0,-9.8])+f[i])
             x[i]+=dt*v[i]
+
+
+            # Collide with four walls
+            for d in ti.static(range(2)):
+                # d = 0: treating X (horizontal) component
+                # d = 1: treating Y (vertical) component
+
+                if x[i][d] < 0:  # Bottom and left
+                    x[i][d] = 0  # move particle inside
+                    v[i][d] = 0  # stop it from moving further
+
+                if x[i][d] > 1:  # Top and right
+                    x[i][d] = 1  # move particle inside
+                    v[i][d] = 0  # stop it from moving further
 
 @ti.kernel
 def add_dot(pos_x:ti.f32,pos_y:ti.f32,fixed_:ti.i32):

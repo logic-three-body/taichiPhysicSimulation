@@ -7,7 +7,7 @@ paused = ti.field(dtype=ti.i32, shape=())
 drag_damping = ti.field(dtype=ti.f32, shape=())
 dashpot_damping = ti.field(dtype=ti.f32, shape=())
 
-max_num_particles = 1024
+max_num_particles = 2
 particle_mass = 1.0
 dt = 1e-3
 substeps = 10
@@ -114,7 +114,8 @@ def main():
             elif e.key == gui.SPACE:
                 paused[None] = not paused[None]
             elif e.key == ti.GUI.LMB:
-                new_particle(e.pos[0], e.pos[1],
+                if num_particles[None]<max_num_particles:
+                    new_particle(e.pos[0], e.pos[1],
                              int(gui.is_pressed(ti.GUI.SHIFT)))
             elif e.key == 'c':
                 num_particles[None] = 0

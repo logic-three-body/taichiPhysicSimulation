@@ -27,4 +27,4 @@ def theta(t):
         )
         theta += theta_dot * delta_t
         theta_dot += theta_double_dot * delta_t
-    return
+    return theta
