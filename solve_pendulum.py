@@ -1,13 +1,13 @@
 import taichi as ti
 ti.init(arch=ti.cpu)
 m=1#默认质量为1
-max_num_dots=200
+max_num_dots=2
 x=ti.Vector.field(2,dtype=ti.f32,shape=max_num_dots)#位置
 v=ti.Vector.field(2,dtype=ti.f32,shape=max_num_dots)#速度
 f=ti.Vector.field(2,dtype=ti.f32,shape=max_num_dots)#拉力
 fixed=ti.field(dtype=ti.i32,shape=max_num_dots)#bool 是否为固定点
 #暂时为弹簧
-springY=50
+springY=5
 rest_len=0.1
 
 num_dots=ti.field(dtype=ti.i32,shape=())
@@ -22,12 +22,20 @@ def substep():
             f[i]=ti.Vector([0,0])
             for j in range(n):
                     #spring
-                    x_ij=x[i]-x[j]
-                    d=x_ij.normalized()
+                    x_ij = x[i] - x[j]
+                    d = x_ij
                     f[i]+=-springY * (x_ij.norm() / rest_len - 1) * d
+                    print('n=',n)
+                    print('x[i]',x[i])
+                    print('x[j]',x[j])
+                    print('d', d)
+                    print('f[',i,']=',f[i])
+                    print('x[',i,j,']=',x_ij)
 
-            v[i]+=dt*(ti.Vector([0,-9.8])+f[i])
-            x[i]+=dt*v[i]
+
+
+                    v[i]+=dt*(ti.Vector([0,-9.8])+f[i])
+                    x[i]+=dt*v[i]
 
 
             # Collide with four walls
@@ -47,8 +55,9 @@ def substep():
 def add_dot(pos_x:ti.f32,pos_y:ti.f32,fixed_:ti.i32):
     new_dot_id=num_dots[None]
     num_dots[None]+=1
-
+    #print('posx,posy',pos_x,pos_y)
     x[new_dot_id]=ti.Vector([pos_x,pos_y])
+    #print('x id',new_dot_id,x[new_dot_id])
     fixed[new_dot_id]=fixed_
 
 def main():
@@ -60,6 +69,7 @@ def main():
             for e in gui.get_events(ti.GUI.PRESS):
                 if e.key==ti.GUI.LMB:
                     add_dot(e.pos[0],e.pos[1],bool(gui.is_pressed(ti.GUI.SHIFT)))
+                    #print(e.pos[0],e.pos[1])
 
         X=x.to_numpy()
 

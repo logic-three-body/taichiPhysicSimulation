@@ -7,7 +7,7 @@ paused = ti.field(dtype=ti.i32, shape=())
 drag_damping = ti.field(dtype=ti.f32, shape=())
 dashpot_damping = ti.field(dtype=ti.f32, shape=())
 
-max_num_particles = 2
+max_num_particles = 200
 particle_mass = 1.0
 dt = 1e-3
 substeps = 10
@@ -39,7 +39,7 @@ def substep():#物理模拟的核心
                 # Spring force
                 f[i] += -spring_Y[None] * (x_ij.norm() / rest_length[i, j] -
                                            1) * d
-
+                #print('f[', i, ']=', f[i])
                 # Dashpot damping
                 v_rel = (v[i] - v[j]).dot(d)
                 f[i] += -dashpot_damping[None] * v_rel * d
