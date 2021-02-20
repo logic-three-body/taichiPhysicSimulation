@@ -4,7 +4,7 @@ ti.init(arch=ti.cpu)
 max_num_dots=1024
 x=ti.Vector.field(2,dtype=ti.f32,shape=max_num_dots)
 v=ti.Vector.field(2,dtype=ti.f32,shape=max_num_dots)
-fixed=ti.field(dtype=ti.i32,shape=max_num_dots)#bool
+fixed=ti.field(dtype=ti.i32,shape=max_num_dots)#bool 是否为固定点
 
 num_dots=ti.field(dtype=ti.i32,shape=())
 dt=1e-3
@@ -14,11 +14,12 @@ def substep():
     n=num_dots[None]
 
     for i in range(n):
-        v[i]+=dt*ti.Vector([0,-9.8])
-        x[i]+=dt*v[i]
+        if not fixed[i]:#是否为固定点
+            v[i]+=dt*ti.Vector([0,-9.8])
+            x[i]+=dt*v[i]
 
 @ti.kernel
-def add_dot(pos_x:ti.f32,pos_y:ti.f32,fixed_:ti.f32):
+def add_dot(pos_x:ti.f32,pos_y:ti.f32,fixed_:ti.i32):
     new_dot_id=num_dots[None]
     num_dots[None]+=1
 
@@ -33,11 +34,18 @@ def main():
 
         for e in gui.get_events(ti.GUI.PRESS):
             if e.key==ti.GUI.LMB:
-                add_dot(e.pos[0],e.pos[1],False)
+                add_dot(e.pos[0],e.pos[1],bool(gui.is_pressed(ti.GUI.SHIFT)))
 
         X=x.to_numpy()
         for i in range(num_dots[None]):
-            gui.circle(X[i],color=0x1e212d,radius=5)
+            if fixed[i]:
+                c=0xe40017
+                r=3
+            else:
+                c=0xb68973
+                r=10
+
+            gui.circle(X[i],color=c,radius=r)
 
         gui.show()
 
