@@ -7,6 +7,15 @@ v=ti.Vector.field(2,dtype=ti.f32,shape=max_num_dots)
 fixed=ti.field(dtype=ti.i32,shape=max_num_dots)#bool
 
 num_dots=ti.field(dtype=ti.i32,shape=())
+dt=1e-3
+substeps = 10#步长帧
+@ti.kernel
+def substep():
+    n=num_dots[None]
+
+    for i in range(n):
+        v[i]+=dt*ti.Vector([0,-9.8])
+        x[i]+=dt*v[i]
 
 @ti.kernel
 def add_dot(pos_x:ti.f32,pos_y:ti.f32,fixed_:ti.f32):
@@ -19,6 +28,9 @@ def add_dot(pos_x:ti.f32,pos_y:ti.f32,fixed_:ti.f32):
 def main():
     gui=ti.GUI('Pendulum System',background_color=0xfaf3e0)
     while True:
+        for i in range(substeps):
+            substep()
+
         for e in gui.get_events(ti.GUI.PRESS):
             if e.key==ti.GUI.LMB:
                 add_dot(e.pos[0],e.pos[1],False)
