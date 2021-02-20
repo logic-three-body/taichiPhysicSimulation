@@ -37,14 +37,19 @@ def main():
                 add_dot(e.pos[0],e.pos[1],bool(gui.is_pressed(ti.GUI.SHIFT)))
 
         X=x.to_numpy()
+
         for i in range(num_dots[None]):
-            if fixed[i]:
+            for j in range(num_dots[None]):
+                gui.line(begin=X[i],end=X[j],color=0xff75a0,radius=2)
+
+
+        for i in range(num_dots[None]):
+            if fixed[i]:#固定点
                 c=0xe40017
                 r=3
-            else:
+            else:#非固定点
                 c=0xb68973
                 r=10
-
             gui.circle(X[i],color=c,radius=r)
 
         gui.show()
