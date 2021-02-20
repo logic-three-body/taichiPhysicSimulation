@@ -2,7 +2,7 @@ import numpy as np
 
 # Physical constants
 g = 9.8
-L = 2
+L = 2 #单摆长
 mu = 0.1
 
 THETA_0 = np.pi / 3  # 60 degrees

@@ -10,31 +10,38 @@ fixed=ti.field(dtype=ti.i32,shape=max_num_dots)#bool 是否为固定点
 springY=5
 rest_len=0.1
 
+
+PI=180.0
+
 num_dots=ti.field(dtype=ti.i32,shape=())
 dt=1e-3
 substeps = 10#步长帧
 @ti.kernel
 def substep():
     n=num_dots[None]
-
+    grav=ti.Vector([0, -9.8])
     for i in range(n):
         if not fixed[i]:#是否为固定点
-            f[i]=ti.Vector([0,0])
+            f[i]=grav
             for j in range(n):
                     #spring
                     x_ij = x[i] - x[j]
-                    d = x_ij
-                    f[i]+=-springY * (x_ij.norm() / rest_len - 1) * d
+
+
+
+                    print('thea=',thea)
+                    print('sinthea',ti.sin(thea))
+                    f[i]
                     print('n=',n)
                     print('x[i]',x[i])
                     print('x[j]',x[j])
-                    print('d', d)
+
                     print('f[',i,']=',f[i])
                     print('x[',i,j,']=',x_ij)
 
 
 
-                    v[i]+=dt*(ti.Vector([0,-9.8])+f[i])
+                    v[i]+=dt*f[i]
                     x[i]+=dt*v[i]
 
 
