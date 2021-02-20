@@ -48,7 +48,7 @@ def substep():#物理模拟的核心
     for i in range(n):
         if not fixed[i]:
             v[i] += dt * f[i] / particle_mass
-            v[i] *= ti.exp(-dt * drag_damping[None])  # Drag damping 速度衰减
+           # v[i] *= ti.exp(-dt * drag_damping[None])  # Drag damping 速度衰减
 
             x[i] += v[i] * dt
         else:
@@ -103,9 +103,9 @@ def main():
     drag_damping[None] = 1
     dashpot_damping[None] = 100
 
-    new_particle(0.3, 0.3, False)
-    new_particle(0.3, 0.4, False)
-    new_particle(0.4, 0.4, False)
+    #new_particle(0.3, 0.3, False)
+    #new_particle(0.3, 0.4, False)
+    #new_particle(0.4, 0.4, False)
 
     while True:
         for e in gui.get_events(ti.GUI.PRESS):

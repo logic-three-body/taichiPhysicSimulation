@@ -1,10 +1,14 @@
 import taichi as ti
 ti.init(arch=ti.cpu)
-
+m=1#默认质量为1
 max_num_dots=2
-x=ti.Vector.field(2,dtype=ti.f32,shape=max_num_dots)
-v=ti.Vector.field(2,dtype=ti.f32,shape=max_num_dots)
+x=ti.Vector.field(2,dtype=ti.f32,shape=max_num_dots)#位置
+v=ti.Vector.field(2,dtype=ti.f32,shape=max_num_dots)#速度
+f=ti.Vector.field(2,dtype=ti.f32,shape=max_num_dots)#拉力
 fixed=ti.field(dtype=ti.i32,shape=max_num_dots)#bool 是否为固定点
+#暂时为弹簧
+springY=50
+rest_len=0.1
 
 num_dots=ti.field(dtype=ti.i32,shape=())
 dt=1e-3
@@ -15,7 +19,15 @@ def substep():
 
     for i in range(n):
         if not fixed[i]:#是否为固定点
-            v[i]+=dt*ti.Vector([0,-9.8])
+            f[i]=ti.Vector([0,0])
+            for j in range(n):
+                    #spring
+                    x_ij=x[i]-x[j]
+                    d=x_ij.normalized()
+                    f[i]+=-springY * (x_ij.norm() / rest_len -
+                                           1) * d
+
+            v[i]+=dt*(ti.Vector([0,-9.8])+f[i])
             x[i]+=dt*v[i]
 
 @ti.kernel
