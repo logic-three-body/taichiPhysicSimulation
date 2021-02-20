@@ -1,7 +1,7 @@
 import taichi as ti
 ti.init(arch=ti.cpu)
 
-max_num_dots=1024
+max_num_dots=2
 x=ti.Vector.field(2,dtype=ti.f32,shape=max_num_dots)
 v=ti.Vector.field(2,dtype=ti.f32,shape=max_num_dots)
 fixed=ti.field(dtype=ti.i32,shape=max_num_dots)#bool 是否为固定点
@@ -31,10 +31,10 @@ def main():
     while True:
         for i in range(substeps):
             substep()
-
-        for e in gui.get_events(ti.GUI.PRESS):
-            if e.key==ti.GUI.LMB:
-                add_dot(e.pos[0],e.pos[1],bool(gui.is_pressed(ti.GUI.SHIFT)))
+        if num_dots[None]<max_num_dots:#局限为两个点
+            for e in gui.get_events(ti.GUI.PRESS):
+                if e.key==ti.GUI.LMB:
+                    add_dot(e.pos[0],e.pos[1],bool(gui.is_pressed(ti.GUI.SHIFT)))
 
         X=x.to_numpy()
 
