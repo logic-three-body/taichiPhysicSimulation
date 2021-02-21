@@ -34,8 +34,7 @@ def theta(t):
     return theta
 
 
-#@ti.kernel
-#def substep():#物理模拟的核心
+
 
 
 
@@ -51,7 +50,7 @@ def main():
 
         x[0]=ti.Vector([0.5,1])
         #x[1]=ti.Vector([0.5,0.5])
-        for i in range(100):
+        for i in range(1):
             global THETA_0
             x[1]=ti.Vector([x[0][0]-L*ti.sin(THETA_0),x[0][1]-L*ti.cos(THETA_0)])
             #x[1]=ti.Vector([x[0][0]+0.1,x[0][1]-0.6])
@@ -60,9 +59,8 @@ def main():
             gui.circle(x[0],color=0xe40017,radius=2)
             gui.circle(x[1],color=0xb68973,radius=10)
             gui.line(begin=x[0], end=x[1], color=0xff75a0, radius=2)
-            #substep()
             gui.show()
-            THETA_0=1+THETA_0
+            THETA_0=0.01+THETA_0
 
 if __name__ == '__main__':
     main()
