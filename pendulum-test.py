@@ -48,11 +48,14 @@ def main():
             if e.key==ti.GUI.LMB:
                 print(e.pos)
 
+        delta_t = 0.01  # Some time step
+        t=100
+        theta = THETA_0
+        theta_dot = THETA_DOT_0
         x[0]=ti.Vector([0.5,1])
         #x[1]=ti.Vector([0.5,0.5])
-        for i in range(1):
-            global THETA_0
-            x[1]=ti.Vector([x[0][0]-L*ti.sin(THETA_0),x[0][1]-L*ti.cos(THETA_0)])
+        for time in np.arange(0, t, delta_t):
+            x[1]=ti.Vector([x[0][0]-L*ti.sin(theta),x[0][1]-L*ti.cos(theta)])
             #x[1]=ti.Vector([x[0][0]+0.1,x[0][1]-0.6])
             print(x)
             print(x[1][0],x[1][1])
@@ -60,7 +63,11 @@ def main():
             gui.circle(x[1],color=0xb68973,radius=10)
             gui.line(begin=x[0], end=x[1], color=0xff75a0, radius=2)
             gui.show()
-            THETA_0=0.01+THETA_0
+            theta_double_dot = get_theta_double_dot(
+                theta, theta_dot
+            )
+            theta += theta_dot * delta_t
+            theta_dot += theta_double_dot * delta_t
 
 if __name__ == '__main__':
     main()
