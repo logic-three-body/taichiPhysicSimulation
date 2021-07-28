@@ -1,5 +1,6 @@
 import taichi as ti
 import numpy as np
+ti.init(arch=ti.cpu)
 max_num_dots=2
 # Physical constants
 g = 9.8
